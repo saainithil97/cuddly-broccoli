@@ -1,0 +1,35 @@
+version: "3"
+
+services:
+  prometheus:
+    image: prom/prometheus:v2.30.3
+    ports:
+      - 9090:9090
+    volumes:
+      - ./prometheus:/etc/prometheus
+      - prometheus-data:/prometheus
+    command: --web.enable-lifecycle  --config.file=/etc/prometheus/prometheus.yaml
+
+  # local setup for grafana 
+  # you can reach grafana on http://localhost:3000
+  # includes
+  # - prometheus datastore
+  # - go runtime metrics dashboard
+  # - http metrics dashboard
+  grafana:
+    image: grafana/grafana:9.1.7
+    ports:
+      - 3000:3000
+    restart: unless-stopped
+    volumes:
+    # mount point for grafana data where all the dashboards and data will be stored
+      - grafana-data:/var/lib/grafana
+    # grafana lets you provision dashboards and datasources from yaml files
+    # Refer: https://grafana.com/docs/grafana/latest/administration/provisioning/#dashboards
+      - ./grafana:/etc/grafana/provisioning
+    # mount point for dashboards, check assets/grafana/provisioning/dashboards for usage
+      - ./dashboards:/etc/dashboards
+
+volumes:
+  prometheus-data:
+  grafana-data:

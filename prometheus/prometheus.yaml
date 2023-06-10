@@ -1,0 +1,18 @@
+global:
+  scrape_interval:     15s
+  evaluation_interval: 15s
+
+rule_files:
+  # - "first.rules"
+  # - "second.rules"
+
+scrape_configs:
+  - job_name: prometheus
+    static_configs:    
+    # localhost:9090 is where prometheus is running
+      - targets: ['localhost:9090']
+  - job_name: core
+    static_configs:
+    # localhost:8080 is the host machine, not the container itself, 
+    # so we need to use host.docker.internal to access it
+      - targets: ['host.docker.internal:8080']
